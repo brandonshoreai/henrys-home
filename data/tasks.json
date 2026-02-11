@@ -1,0 +1,10 @@
+[
+  {
+    "id": "1",
+    "title": "AI App Factory + UGC Pipeline",
+    "description": "Build end-to-end app development and marketing pipeline:\n1. Spencer app template system (standardized skeleton with paywalls, onboarding, analytics)\n2. App Store scraper for competitor review analysis\n3. UGC video pipeline (TikTok scraper → script → avatar → video assembly → 20 videos/day)\n4. Marketing agent for content strategy and Meta Ads\n5. Pipeline dashboard to track all apps\n\nFirst step: Build ONE app together to establish Spencer's template, then scale to 30 apps.",
+    "priority": "high",
+    "status": "todo",
+    "createdAt": "2026-02-11T13:41:00Z"
+  }
+]

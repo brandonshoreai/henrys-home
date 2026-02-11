@@ -16,6 +16,8 @@ import {
   BarChart3,
   Settings,
   Radar,
+  CheckSquare,
+  CalendarCheck,
 } from "lucide-react";
 import StatusDot from "./StatusDot";
 
@@ -25,6 +27,8 @@ const nav = [
   { href: "/sessions", label: "Sessions", icon: MessagesSquare },
   { href: "/chat", label: "Chat", icon: MessageCircle },
   { href: "/feed", label: "Live Feed", icon: Activity },
+  { href: "/tasks", label: "Tasks", icon: CheckSquare },
+  { href: "/dailies", label: "Dailies", icon: CalendarCheck },
   { href: "/cron", label: "Cron Jobs", icon: Timer },
   { href: "/skills", label: "Skills", icon: Puzzle },
   { href: "/nodes", label: "Nodes", icon: Server },
