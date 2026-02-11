@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import MetricCard from "@/components/MetricCard";
 import StatusDot from "@/components/StatusDot";
 import DonutChart from "@/components/DonutChart";
-import { Activity, Cpu, DollarSign, Users, Clock } from "lucide-react";
+import { Activity, Cpu, DollarSign, Users, Clock, Wifi, WifiOff } from "lucide-react";
 
 interface HealthData {
   online: boolean;
@@ -30,6 +30,9 @@ export default function DashboardHome() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [skills, setSkills] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [feedEvents, setFeedEvents] = useState<Array<{id: number; time: Date; text: string; kind: string}>>([]);
+  const [feedConnected, setFeedConnected] = useState(false);
+  const feedRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function load() {
@@ -57,6 +60,38 @@ export default function DashboardHome() {
     const i = setInterval(load, 30000);
     return () => clearInterval(i);
   }, []);
+
+  // Live feed connection
+  useEffect(() => {
+    let counter = 0;
+    const es = new EventSource("/api/ws");
+    es.onmessage = (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        if (data.type === "connected") setFeedConnected(true);
+        if (data.type === "disconnected") setFeedConnected(false);
+        let text = ""; let kind = "system";
+        if (data.type === "event" && data.event === "agent") {
+          const p = data.payload || {};
+          const ev = p.event || p.type || "";
+          if (ev === "tool_use" || ev === "tool_call" || p.tool) { kind = "tool"; text = `Tool: ${p.tool || p.name}`; }
+          else if (p.role || p.content) { kind = p.role === "user" ? "user" : "assistant"; text = String(p.content || p.text || "").slice(0, 120); }
+          else if (p.thinking) { kind = "thinking"; text = String(p.thinking).slice(0, 80); }
+          else { text = JSON.stringify(p).slice(0, 100); }
+        } else if (data.type === "connected") { text = "Connected to gateway"; }
+        else if (data.type === "disconnected") { text = "Disconnected"; kind = "error"; }
+        else if (data.type === "error") { text = String(data.message); kind = "error"; }
+        else { text = JSON.stringify(data).slice(0, 100); }
+        if (text) setFeedEvents(prev => [...prev.slice(-20), { id: ++counter, time: new Date(), text, kind }]);
+      } catch {}
+    };
+    es.onerror = () => setFeedConnected(false);
+    return () => es.close();
+  }, []);
+
+  useEffect(() => {
+    if (feedRef.current) feedRef.current.scrollTop = feedRef.current.scrollHeight;
+  }, [feedEvents]);
 
   if (loading) {
     return (
@@ -195,6 +230,32 @@ export default function DashboardHome() {
           )}
         </div>
       </div>
+
+      {/* Live Feed */}
+      <div className="card p-6 mt-5">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-medium text-gray-500">Live Feed</h3>
+          <div className="flex items-center gap-2">
+            {feedConnected ? (
+              <><Wifi size={14} className="text-green-500" /><span className="text-[10px] text-green-600">Live</span></>
+            ) : (
+              <><WifiOff size={14} className="text-red-400" /><span className="text-[10px] text-red-500">Offline</span></>
+            )}
+            <a href="/feed" className="text-[10px] text-apple-blue hover:underline ml-2">Full view →</a>
+          </div>
+        </div>
+        <div ref={feedRef} className="space-y-1 max-h-64 overflow-y-auto">
+          {feedEvents.length === 0 ? (
+            <p className="text-xs text-gray-300 text-center py-8">Waiting for events...</p>
+          ) : feedEvents.map(ev => (
+            <div key={ev.id} className={`flex items-start gap-2 py-1 text-xs ${ev.kind === "error" ? "text-red-500" : ev.kind === "user" ? "text-blue-600" : ev.kind === "tool" ? "text-orange-600" : ev.kind === "thinking" ? "text-purple-400" : "text-gray-600"}`}>
+              <span className="text-gray-300 font-mono flex-shrink-0">{ev.time.toLocaleTimeString()}</span>
+              <span className="truncate">{ev.text}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
     </div>
   );
 }

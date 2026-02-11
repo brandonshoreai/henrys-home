@@ -1,27 +1,31 @@
 import { NextResponse } from "next/server";
-import { invokeGateway } from "@/lib/openclaw";
+import fs from "fs";
+import path from "path";
 
 export async function GET() {
-  const result = await invokeGateway("exec", { command: "openclaw agents list --json 2>/dev/null || echo '[]'" });
-  if (!result.ok) {
-    const sessResult = await invokeGateway("sessions_list", {});
-    if (sessResult.ok) {
-      const data = sessResult.data as Record<string, unknown> | unknown[];
-      const sessions = (Array.isArray(data) ? data : (data as Record<string, unknown>)?.sessions || []) as Record<string, unknown>[];
-      const agentMap = new Map();
-      for (const s of sessions) {
-        const agentId = (s.agentId || s.agent_id || "main") as string;
-        if (!agentMap.has(agentId)) {
-          agentMap.set(agentId, { id: agentId, name: agentId, status: "online", model: s.model || "unknown" });
-        }
-      }
-      return NextResponse.json({ agents: Array.from(agentMap.values()) });
-    }
-    return NextResponse.json({ agents: [], error: result.error });
+  try {
+    const configPath = path.join(process.env.HOME || "/Users/brandonai", ".openclaw/openclaw.json");
+    const raw = fs.readFileSync(configPath, "utf8");
+    const config = JSON.parse(raw);
+    
+    const agentsList = config.agents?.list || [];
+    const defaultModel = config.defaultModel || config.agents?.defaults?.model || "unknown";
+    
+    const agents = agentsList.map((a: Record<string, unknown>) => {
+      const identity = a.identity as Record<string, string> | undefined;
+      return {
+        id: a.id || a.name,
+        name: identity?.name || a.name || a.id,
+        emoji: identity?.emoji || "🤖",
+        model: a.model || defaultModel,
+        status: "online",
+        role: identity?.theme || "",
+        workspace: a.workspace || "",
+      };
+    });
+
+    return NextResponse.json({ agents });
+  } catch (e) {
+    return NextResponse.json({ agents: [], error: String(e) });
   }
-  let agents = result.data;
-  if (!agents && result.text) {
-    try { agents = JSON.parse(result.text); } catch { agents = []; }
-  }
-  return NextResponse.json({ agents: Array.isArray(agents) ? agents : [] });
 }

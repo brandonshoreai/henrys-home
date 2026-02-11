@@ -57,8 +57,8 @@ export default function AgentsPage() {
                   <span className="text-xs text-gray-400">{(agent.role as string) || (agent.id as string)}</span>
                 </div>
               </div>
-              {agent.model && <span className="badge badge-gray">{agent.model as string}</span>}
-              {agent.workspace && <p className="text-xs text-gray-300 mt-2 truncate">{agent.workspace as string}</p>}
+              {agent.model ? <span className="badge badge-gray">{String(agent.model)}</span> : null}
+              {agent.workspace ? <p className="text-xs text-gray-300 mt-2 truncate">{String(agent.workspace)}</p> : null}
             </div>
           ))}
         </div>
