@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --apple-blue: #FF3B30;
+  --apple-green: #34C759;
+  --apple-orange: #FF9500;
+  --apple-red: #FF3B30;
+  --apple-gray: #F5F5F7;
+  --apple-gray-dark: #86868B;
+  --shadow-apple: 0 1px 3px rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.06);
+  --shadow-apple-hover: 0 2px 8px rgba(0,0,0,0.06), 0 12px 40px rgba(0,0,0,0.1);
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: #FFFFFF;
+  color: #1D1D1F;
+}
+
+@layer components {
+  .card {
+    @apply bg-white/70 backdrop-blur-2xl rounded-[16px] border border-gray-200/60 shadow-apple transition-all duration-200;
+  }
+  .card:hover {
+    @apply shadow-apple-hover -translate-y-0.5;
+  }
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-2xl border border-gray-200/60;
+  }
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  .badge-blue { @apply bg-red-50 text-apple-blue; }
+  .badge-green { @apply bg-green-50 text-apple-green; }
+  .badge-orange { @apply bg-orange-50 text-apple-orange; }
+  .badge-red { @apply bg-red-50 text-apple-red; }
+  .badge-gray { @apply bg-gray-100 text-gray-600; }
+  .input-apple {
+    @apply w-full px-4 py-2.5 rounded-xl border border-gray-200/80 bg-white/80 backdrop-blur-sm text-sm transition-all duration-200 outline-none;
+  }
+  .input-apple:focus {
+    @apply border-apple-blue ring-2 ring-apple-blue/20;
+  }
+  .btn-primary {
+    @apply px-5 py-2.5 bg-apple-blue text-white rounded-xl text-sm font-medium transition-all duration-200 hover:bg-[#E0312B] active:scale-[0.98];
+  }
+  .btn-secondary {
+    @apply px-5 py-2.5 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium transition-all duration-200 hover:bg-gray-200 active:scale-[0.98];
+  }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d1d1d6; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #a1a1a6; }
