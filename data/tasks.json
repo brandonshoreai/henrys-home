@@ -6,5 +6,13 @@
     "priority": "high",
     "status": "todo",
     "createdAt": "2026-02-11T13:41:00Z"
+  },
+  {
+    "id": "2",
+    "title": "Instagram @ai_for_blondes Automation Pipeline",
+    "description": "Finish and perfect the automated Instagram content pipeline for @ai_for_blondes (mirroring @uncover.ai style).\n\nDone:\n✅ Carousel generator (generate_carousel.py) with cinematic slide 1 template\n✅ Style guide locked — Impact font, pink keywords, circular inset, vignette\n✅ Nano-banana integration for editorial image generation\n✅ Reference posts analyzed and saved\n✅ Logo and brand assets ready\n✅ Repo: github.com/brandonshoreai/instagram-pipeline\n\nTodo:\n• Set up Pexels/Unsplash API for stock photo sourcing\n• Smart image selection (match story mood vs random)\n• Build carousel video format (headline + text + video clips)\n• Build reel format (headline overlay on interview/demo clips)\n• Automate full pipeline: story detection → media sourcing → slide generation → review queue\n• Instagram posting API (need Facebook Business page linked to @ai_for_blondes for Graph API)\n• Fix generate_carousel.py to use local font/file paths (not /tmp/Anton)\n• Quality gate: compare generated slides against reference before posting",
+    "priority": "high",
+    "status": "in-progress",
+    "createdAt": "2026-02-12T16:00:00Z"
   }
 ]
